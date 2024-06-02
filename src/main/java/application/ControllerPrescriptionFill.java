@@ -168,8 +168,12 @@ public class ControllerPrescriptionFill {
 
 			//	If there are rows in prescriptionFillTable, then decrement refills by 1
 			//	Set as refills remaining
-			if (prescriptionFillTable.next()){
+			prescriptionFillTable.next();
+			if (prescriptionFillTable.getInt(1) == 0){
+				prescription.setRefillsRemaining(prescription.getRefills());
+			} else {
 				prescription.setRefillsRemaining(prescription.getRefills() - 1);
+				prescription.setRefills(prescription.getRefillsRemaining());
 			}
 
 			//	Increment fillNumber, will be used later when inserting row into prescription_fill
