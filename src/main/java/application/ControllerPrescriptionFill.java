@@ -151,11 +151,9 @@ public class ControllerPrescriptionFill {
 			//	If refills == 0, then we have no more refills remaining.
 			//	Display message "No more refills available"
 			//	Return user to prescription fill page
-			if (prescription.getRefills() == 0){
-				model.addAttribute("message", "No more refills available");
-				model.addAttribute("prescription", prescription);
-				return "prescription_fill";
-			}
+//			if (prescription.getRefills() == 0){
+//
+//			}
 
 			//	Find number of prescription_fills in table
 			//	Use this to increment fill_number in database
@@ -166,9 +164,15 @@ public class ControllerPrescriptionFill {
 
 			ResultSet prescriptionFillTable = findRefillNumber.executeQuery();
 
+			prescriptionFillTable.next();
+
 			//	If there are rows in prescriptionFillTable, then decrement refills by 1
 			//	Set as refills remaining
-			prescriptionFillTable.next();
+			if (prescriptionFillTable.getInt(1)== prescription.getRefills() + 1){
+				model.addAttribute("message", "No more refills available");
+				model.addAttribute("prescription", prescription);
+				return "prescription_fill";
+			}
 			if (prescriptionFillTable.getInt(1) == 0){
 				prescription.setRefillsRemaining(prescription.getRefills());
 			} else {
@@ -242,13 +246,13 @@ public class ControllerPrescriptionFill {
 			prescription.setDateFilled(LocalDate.now().toString());
 
 			//	Update prescription, decrement refills
-			PreparedStatement updatePrescription = dbConnection.prepareStatement
-					("update prescription set refills = ? where rx_id = ?");
-
-			updatePrescription.setInt(1, prescription.getRefillsRemaining());
-			updatePrescription.setInt(2, prescription.getRxid());
-
-			updatePrescription.executeUpdate();
+//			PreparedStatement updatePrescription = dbConnection.prepareStatement
+//					("update prescription set refills = ? where rx_id = ?");
+//
+//			updatePrescription.setInt(1, prescription.getRefillsRemaining());
+//			updatePrescription.setInt(2, prescription.getRxid());
+//
+//			updatePrescription.executeUpdate();
 
 			//	Insert prescriptionFill, uses SQL function curdate() to set date
 			PreparedStatement insertPrescriptionFill = dbConnection.prepareStatement
